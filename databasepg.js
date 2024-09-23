@@ -1,21 +1,35 @@
-const {Client} = require("pg")
+require("dotenv").config();
+
+const host = process.env.host;
+const user = process.env.user;
+const password = process.env.password;
+const database = process.env.database;
+const port = process.env.port;
+
+
+
+const { Client } = require("pg");
 
 const client = new Client({
-    host: "localhost",
-    user: "postgres",
-    password: "postgres",
-    database: "dvdrental",
-    port: "5432"
-})
+    host: host,
+    user: user,
+    password: password,
+    database: database,
+    port: port,
+    ssl: { rejectUnauthorized: false } // Configuração SSL se necessário
+});
 
-client.connect();
-
-client.query(`select * from actor`, (err, res)=>{
-    if(!err){
+client.connect()
+    .then(() => {
+        console.log("Conectado ao banco de dados!");
+        return client.query(`select * from clientes`);
+    })
+    .then(res => {
         console.log(res.rows);
-    }
-    else{
-        console.log(err.message);
-    }
-    client.end;
-})
+    })
+    .catch(err => {
+        console.error("Erro ao conectar ou realizar a consulta:", err.message);
+    })
+    .finally(() => {
+        client.end();
+    });
