@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="forms">
+        <input type="text" class="name" placeholder="Nome" required>
+        <input type="text" class="endereco" placeholder="Endereço" required>
+        <input type="text" class="phoneNumber" placeholder="Número de Telefone" required>
+        <button class="submit" onclick="sendDatabase()">Enviar</button>
+    </div>
+
+    <script>
+        async function sendDatabase() {
+            const name = document.querySelector('.name').value;
+            const endereco = document.querySelector('.endereco').value;
+            const phoneNumber = document.querySelector('.phoneNumber').value;
+
+            const response = await fetch('http://localhost:3000/api/clientes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name, endereco, phoneNumber }),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data.message); // Mensagem de sucesso
+                alert("Dados enviados com sucesso!"); // Exibir alerta para o usuário
+            } else {
+                const errorData = await response.json();
+                console.error("Erro:", errorData.error); // Log de erro
+                alert("Erro ao enviar dados: " + errorData.error); // Exibir alerta para erro
+            }
+        }
+    </script>
+</body>
+</html>
